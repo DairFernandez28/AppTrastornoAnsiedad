@@ -24,17 +24,20 @@ def insertCitas():
     result = {}
     body = request.get_json()
     idPaciente = body.get('idPaciente')
-    idRecomendApoyo = body.get('idRecomendApoyo')
+    idEspecialista = body.get('idEspecialista')
+    diagnostico = body.get('diagnostico')
+    nivelAnsiedad = body.get('nivelAnsiedad')
     fechaCita = body.get('fechaCita')
+    fechaDiagnostico = body.get('fechaDiagnostico')
     horaCita = body.get('horaCita')
     culminado = body.get('culminado')
 
-    if not idPaciente or not idRecomendApoyo or not fechaCita or not horaCita:
+    if not idPaciente or not idEspecialista or not diagnostico or not nivelAnsiedad or not fechaCita or not fechaDiagnostico or not horaCita:
         result["status_code"] = 400
         result["msg"] = "Faltan datos"
         return jsonify(result), 400
     
-    Cita = tbCita(idPaciente, idRecomendApoyo, fechaCita, horaCita, culminado)
+    Cita = tbCita(idPaciente, idEspecialista, diagnostico, nivelAnsiedad, fechaCita, fechaDiagnostico, horaCita, culminado)
     db.session.add(Cita)
     db.session.commit()
     result["data"] = Cita
@@ -48,12 +51,15 @@ def updateCitas():
     body = request.get_json()
     idCita = body.get('idCita')
     idPaciente = body.get('idPaciente')
-    idRecomendApoyo = body.get('idRecomendApoyo')
+    idEspecialista = body.get('idEspecialista')
+    diagnostico = body.get('diagnostico')
+    nivelAnsiedad = body.get('nivelAnsiedad')
     fechaCita = body.get('fechaCita')
+    fechaDiagnostico = body.get('fechaDiagnostico')
     horaCita = body.get('horaCita')
     culminado = body.get('culminado')
 
-    if not idCita or not idPaciente or not idRecomendApoyo or not fechaCita or not horaCita:
+    if not idCita or not idPaciente or not idEspecialista or not diagnostico or not nivelAnsiedad or not fechaCita or not fechaDiagnostico or not horaCita:
         result["status_code"] = 400
         result["msg"] = "Faltan datos"
         return jsonify(result), 400
@@ -65,8 +71,11 @@ def updateCitas():
         return jsonify(result), 400
     
     Cita.idPaciente = idPaciente
-    Cita.idRecomendApoyo = idRecomendApoyo
+    Cita.idEspecialista = idEspecialista
+    Cita.diagnostico = diagnostico
+    Cita.nivelAnsiedad = nivelAnsiedad
     Cita.fechaCita = fechaCita
+    Cita.fechaDiagnostico = fechaDiagnostico
     Cita.horaCita = horaCita
     Cita.culminado = culminado
     db.session.commit()

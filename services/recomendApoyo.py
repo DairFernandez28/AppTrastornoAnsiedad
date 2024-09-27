@@ -28,14 +28,13 @@ def insertRecomendacionesApoyos():
     descripRecomendApoyo = body.get('descripRecomendApoyo')
     fechaRecomendApoyo = body.get('fechaRecomendApoyo')
     nivelAnsiedadRevision = body.get('nivelAnsiedadRevision')
-    citaAgendada = body.get('citaAgendada')
 
     if not idEspecialista or not idResultadoTest or not descripRecomendApoyo or not fechaRecomendApoyo or not nivelAnsiedadRevision:
         result["status_code"] = 400
         result["msg"] = "Faltan datos"
         return jsonify(result), 400
     
-    RecomendacionApoyo = tbRecomendApoyo(idEspecialista, idResultadoTest, descripRecomendApoyo, fechaRecomendApoyo, nivelAnsiedadRevision, citaAgendada)
+    RecomendacionApoyo = tbRecomendApoyo(idEspecialista, idResultadoTest, descripRecomendApoyo, fechaRecomendApoyo, nivelAnsiedadRevision)
     db.session.add(RecomendacionApoyo)
     db.session.commit()
     result["data"] = RecomendacionApoyo
@@ -53,7 +52,6 @@ def updateRecomendacionesApoyos():
     descripRecomendApoyo = body.get('descripRecomendApoyo')
     fechaRecomendApoyo = body.get('fechaRecomendApoyo')
     nivelAnsiedadRevision = body.get('nivelAnsiedadRevision')
-    citaAgendada = body.get('citaAgendada')
 
     if not idRecomendApoyo or not idEspecialista or not idResultadoTest or not descripRecomendApoyo or not fechaRecomendApoyo or not nivelAnsiedadRevision:
         result["status_code"] = 400
@@ -71,7 +69,6 @@ def updateRecomendacionesApoyos():
     RecomendacionApoyo.descripRecomendApoyo = descripRecomendApoyo
     RecomendacionApoyo.fechaRecomendApoyo = fechaRecomendApoyo
     RecomendacionApoyo.nivelAnsiedadRevision = nivelAnsiedadRevision
-    RecomendacionApoyo.citaAgendada = citaAgendada
     db.session.commit()
 
     result["data"] = RecomendacionApoyo
