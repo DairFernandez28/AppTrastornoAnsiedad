@@ -29,13 +29,14 @@ def insertResultadoTest():
     infoResultado = body.get('infoResultado')
     fechaResultadoTest = body.get('fechaResultadoTest')
     revisadoResultadoTest = body.get('revisadoResultadoTest')
+    revisando = body.get('revisando')
 
     if not idPaciente or not infoResultado or not fechaResultadoTest or puntajeResultadoTest is None:
         result["status_code"] = 400
         result["msg"] = "Faltan datos"
         return jsonify(result), 400
 
-    resultadotest = tbResultadoTest(idPaciente, puntajeResultadoTest, infoResultado, fechaResultadoTest, revisadoResultadoTest)
+    resultadotest = tbResultadoTest(idPaciente, puntajeResultadoTest, infoResultado, fechaResultadoTest, revisadoResultadoTest, revisando)
     db.session.add(resultadotest)
     db.session.commit()
     result["data"] = resultadotest
@@ -53,6 +54,7 @@ def updateResultadoTests():
     infoResultado = body.get('infoResultado')
     fechaResultadoTest = body.get('fechaResultadoTest')
     revisadoResultadoTest = body.get('revisadoResultadoTest')
+    revisando = body.get('revisando')
 
     if not idResultadoTest or not idPaciente or not infoResultado or not fechaResultadoTest or puntajeResultadoTest is None:
         result["status_code"] = 400
@@ -70,6 +72,7 @@ def updateResultadoTests():
     resultadosTest.infoResultado = infoResultado
     resultadosTest.fechaResultadoTest = fechaResultadoTest
     resultadosTest.revisadoResultadoTest = revisadoResultadoTest
+    resultadosTest.revisando = revisando
     db.session.commit()
 
     result["data"] = resultadosTest
