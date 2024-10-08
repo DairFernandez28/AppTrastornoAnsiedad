@@ -19,6 +19,36 @@ def getPacientes():
     result["msg"] = "Se recupero los datos sin incovenientes"
     return jsonify(result), 200
 
+@pacientes.route('/Pacientes/v1/login', methods=['POST'])
+def loginPaciente():
+    result = {}
+    body = request.get_json()
+    Paciente = tbPaciente.query.filter(tbPaciente.correoPaciente == body.get("correoPaciente")).all()
+    if len(Paciente) == 0:
+        result["data"] = Paciente
+        result["status_code"] = 400
+        result["msg"] = "Paciente no encontrado"
+        return jsonify(result) , 400
+    FinalPaciente = list(filter(lambda p: p.contraPaciente == body.get("contraPaciente"),Paciente))
+    result["data"] = FinalPaciente
+    if len(FinalPaciente) == 0:
+        result["status_code"] = 400
+        result["msg"] = "Contrasena incorrecta"
+        return jsonify(result),400
+    result["msg"] = "Login exitoso"
+    result["status_code"] = 200
+
+    return jsonify(result),200
+ 
+@pacientes.route('/Paciente/v1/idByDNI',methods=['GET'])
+def getIdByDNI():
+    dni = request.args["dni"]
+    result = {}
+    Paciente = tbPaciente.query.filter(tbPaciente.dniPaciente == dni).first()
+    if Paciente == None:
+        return jsonify(-1),400
+    return jsonify(Paciente.idPaciente),200
+
 @pacientes.route('/Pacientes/v1/insert', methods=['POST'])
 def insert():
     result = {}

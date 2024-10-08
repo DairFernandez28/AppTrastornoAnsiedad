@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from model.preguntasTest import tbPreguntasTest
+from model.opcionesTest import tbOpcionesTest
 from utils.db import db
 
 # Definición del blueprint
@@ -18,6 +19,26 @@ def getPreguntasTest():
     result["data"] = preguntaTest
     result["status_code"] = 200
     result["msg"] = "Se recuperaron las preguntas del test sin inconvenientes"
+    return jsonify(result), 200
+
+@PreguntasTests.route('/PreguntasTests/v1/listarPorIdTest',methods=['GET'])
+def getPreguntasTestById():
+    params = request.args
+    data = []
+    preguntaTest = tbPreguntasTest.query.filter(tbPreguntasTest.idTest == int(params["idTest"])).all()
+    for p in preguntaTest:
+        element = {}
+        element["idPreguntaTest"] = p.idPreguntaTest
+        element["idTest"] = p.idTest
+        element["enunciadoPreguntaTest"] = p.enunciadoPreguntaTest
+        element["numPregunta"] = p.numPregunta
+        element["opciones"] = tbOpcionesTest.query.filter(tbOpcionesTest.idPreguntaTest == p.idPreguntaTest).all()
+        data.append(element)
+    result = {}
+    result["data"] = data
+    result["status_code"] = 200
+    result["msg"] = "Se recuperaron las preguntas del test sin inconvenientes"
+
     return jsonify(result), 200
 
 @PreguntasTests.route('/PreguntasTests/v1/insert', methods=['POST'])

@@ -1,5 +1,9 @@
+import datetime
 from flask import Blueprint, request, jsonify
 from model.resultadoTest import tbResultadoTest
+from model.rangosPuntaje import tbRangosPuntaje
+from model.respuestasTest import tbRespuestasTest
+from datetime import datetime
 from utils.db import db
 
 # Definición de blueprint
@@ -79,6 +83,34 @@ def updateResultadoTests():
     result["status_code"] = 202
     result["msg"] = "Se modificó el resultado del test"
     return jsonify(result), 202
+
+@ResultadoTests.route('/ResultadoTests/v1/send', methods=['POST'])
+def sendResultado():
+    body = request.get_json()
+    respuestas = list(body.get("respuestas"))
+    idTest = int(body.get("idTest"))
+    idPaciente = int(body.get("idPaciente"))
+    idResultadoTest = tbResultadoTest.query.count() + 1
+    puntaje = 0
+    tbRespuestas = []
+    for respuesta in respuestas:
+        tbRespuestas.append(tbRespuestasTest(idResultadoTest = idResultadoTest,
+                                             idTest= idTest,
+                                             pregunta=respuesta.get("pregunta"),
+                                             respuesta=respuesta.get("respuesta"),
+                                             valorRespuesta=respuesta.get("valorRespuesta")))
+        puntaje += int(respuesta["valorRespuesta"])
+    rangoPuntaje = tbRangosPuntaje.query.filter(tbRangosPuntaje.idTest == idTest and tbRangosPuntaje.minimoPuntaje < puntaje and tbRangosPuntaje.maximoPuntaje > puntaje).first()
+    interpretacion = rangoPuntaje.interpretacionPuntaje
+    resultado = tbResultadoTest(idPaciente=idPaciente,puntajeResultadoTest=puntaje,infoResultado=interpretacion,fechaResultadoTest=datetime.now(),
+                                revisando= False,revisadoResultadoTest=False)
+    db.session.add(resultado)
+    db.session.commit()
+    db.session.add_all(tbRespuestas)
+    db.session.commit()
+    result = {}
+    result["data"] = resultado
+    return jsonify(result),200
 
 @ResultadoTests.route('/ResultadoTests/v1/delete', methods=['DELETE'])
 def deleteResultadoTests():
